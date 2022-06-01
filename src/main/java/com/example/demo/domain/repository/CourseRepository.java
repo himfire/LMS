@@ -7,9 +7,12 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course,Long> , QuerydslPredicateExecutor<Course> {
-
+    boolean existsBySlugTitle(String slugTitle);
 List<Course> findAllByTitle(String title);
+Optional<Course> findBySlugTitle(String slugTitle);
+List<Course> findByAuthor(String author);
 }

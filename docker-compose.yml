@@ -1,0 +1,29 @@
+version : '3'
+services:
+  database:
+    image: postgres
+    container_name: database
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: on-failure
+
+  springboot-server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: demo
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/db
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:

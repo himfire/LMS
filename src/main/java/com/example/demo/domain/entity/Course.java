@@ -1,6 +1,7 @@
 package com.example.demo.domain.entity;
 
 import com.example.demo.domain.value.enumurator.CourseCategory;
+import com.example.demo.domain.value.enumurator.Language;
 import com.example.demo.domain.value.enumurator.Level;
 import lombok.*;
 
@@ -20,40 +21,48 @@ public class Course extends Auditable{
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
-    @Column(name="id")
     private Long id;
 
-    @Column(length = 500)
     private String title;
+
+    @Column(unique = true)
+    private String slugTitle; //slug titl
 
     @Lob
     private String description;
 
-    @Column(name="price")
     private float price;
 
-    @Column(name="course_image")
     private String courseImageURL;
+    private String courseVideoURL;
+    private String videoImage;
+    @ElementCollection
+    private List<String> targetAudience;
 
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
 
     @OneToMany(targetEntity = LessonModule.class)
-    private List<LessonModule> lessonModules;
+    private Set<LessonModule> lessonModules;
 
-    @Column
     private Level skillLevel;
 
-    @Column
+    private Long duration;
+
     private CourseCategory courseCategory;
 
-    @Column
     private boolean isActive;
 
-    @OneToOne
+
     private Language language;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Tag> tags;
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Rating rating;
+
+    @OneToMany
+    private List<Comment> comments;
+    private String contributors;
 }

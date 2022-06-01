@@ -1,6 +1,7 @@
 package com.example.demo.utility.validator;
 
 import com.example.demo.domain.value.dto.SignUpDTO;
+import com.example.demo.domain.value.enumurator.Authority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,8 @@ public class UserValidator {
         List<String> errors =  new ArrayList<String>();
         if(signUpDTO.getEmail() == null ){
             errors.add("Email is required");
-        } else if ( ! signUpDTO.getEmail().matches("^[a-zA-Z]{3,}@[a-zA-Z]{3,}.[a-zA-Z]{3,}$")) {
+        } else if ( ! signUpDTO.getEmail().matches("^[a-zA-Z]+[A-Za-z0-9+_.-]{3,}+@(.+)$")) {
+            // fitsname.lastname@company.com
             errors.add("Email is invalid");
         }
         if(signUpDTO.getFirstName() == null ){
@@ -36,12 +38,12 @@ public class UserValidator {
         }
         if(signUpDTO.getPhone() == null ){
             errors.add("Phone must not be empty");
-        } else if ( ! signUpDTO.getPhone().matches("^\\+[0-9]{10,14}")) {
+        } else if ( ! signUpDTO.getPhone().getPhoneNumber().matches("[0-9]{7,11}")) {
             errors.add("Phone is invalid");
         }
         if(signUpDTO.getAuthority() == null ){
             errors.add("Authority is required");
-        } else if ( ! signUpDTO.getAuthority().equals("USER")) {
+        } else if ( signUpDTO.getAuthority().equals(Authority.ADMIN)) {
             errors.add("Invalid authority");
         }
 

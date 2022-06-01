@@ -5,14 +5,13 @@ import com.example.demo.domain.entity.Resource;
 import com.example.demo.domain.repository.ResourceRepository;
 import com.example.demo.domain.service.LessonService;
 import com.example.demo.domain.service.ResourceService;
-import com.example.demo.domain.value.dto.LessonDTO;
 import com.example.demo.domain.value.dto.ResourceDTO;
 import com.example.demo.domain.value.dto.create.CreateResourceDTO;
 import com.example.demo.domain.value.dto.update.UpdateResourceDTO;
-import com.example.demo.exceptions.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -32,4 +32,5 @@ public interface UserService {
     void delete(Long userId);
     TokenDTO login(LoginDTO dto);
     boolean hasAccess(Long id);
+    void verifyUser(Long userId,String code);
 }

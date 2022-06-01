@@ -6,6 +6,7 @@ import com.example.demo.domain.service.impl.UserServiceImpl;
 import com.example.demo.domain.value.dto.LoginDTO;
 import com.example.demo.domain.value.dto.SignUpDTO;
 import com.example.demo.domain.value.dto.TokenDTO;
+import com.example.demo.domain.value.dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,18 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody SignUpDTO dto){
+    public ResponseEntity<?> signUp(@RequestBody SignUpDTO dto){
         userService.signUp(dto);
-        return new ResponseEntity<>("User created !", HttpStatus.CREATED);
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO dto){
-        return new ResponseEntity<>(userService.login(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.login(dto), HttpStatus.OK);
+    }
+
+    @PostMapping("/verify/{userId}")
+    public ResponseEntity<?> verifyUser(@PathVariable Long userId, @RequestParam String code){
+        userService.verifyUser(userId,code);
+        return new ResponseEntity<>(null,HttpStatus.OK);
     }
 }

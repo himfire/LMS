@@ -1,5 +1,8 @@
 package com.example.demo.domain.value.dto;
 
+import com.example.demo.domain.entity.Address;
+import com.example.demo.domain.entity.Phone;
+import com.example.demo.domain.value.enumurator.Authority;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -21,7 +24,9 @@ public class SignUpDTO {
 
     private String password;
 
-    private String phone;
+    private Phone phone;
 
-    private String authority;
+    private Address address;
+
+    private Authority authority;
 }

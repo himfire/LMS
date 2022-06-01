@@ -1,14 +1,9 @@
 package com.example.demo.domain.value.dto;
 
-import com.example.demo.domain.entity.Authority;
-import com.sun.istack.NotNull;
+import com.example.demo.domain.entity.Address;
+import com.example.demo.domain.entity.Phone;
+import com.example.demo.domain.value.enumurator.Authority;
 import lombok.*;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.Set;
 
 
 @Setter
@@ -30,14 +25,11 @@ public class UserDTO {
 
     private String summary;
 
-    private String phone;
+    private Phone phone;
 
-    private String address1;
-    private String address2;
-    private String address3;
+    private Address address;
 
-    //TODO: change to Entity
-    private Set<Long> languages;
+    private boolean isActive;
 
     private Authority authority;
 }

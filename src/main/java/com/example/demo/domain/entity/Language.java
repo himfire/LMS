@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 
+/*
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -22,6 +23,9 @@ public class Language {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "languages")
-    List<User> users;
+*/
+/*    @ManyToMany(mappedBy = "languages")
+    List<User> users;*//*
+
 }
+*/

@@ -1,42 +1,42 @@
 package com.example.demo.config;
 
-import com.example.demo.domain.entity.Authority;
-import com.example.demo.domain.repository.AuthorityRepository;
+import com.example.demo.domain.entity.Phone;
+import com.example.demo.domain.entity.User;
 import com.example.demo.domain.repository.UserRepository;
 import com.example.demo.domain.service.UserService;
-import com.example.demo.domain.value.dto.SignUpDTO;
+import com.example.demo.domain.value.enumurator.Authority;
+import com.example.demo.domain.value.enumurator.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class ApplicationInitializer {
-    @Autowired
-    private AuthorityRepository authorityRepository;
+
 
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Bean
     public void init(){
-        Authority userAuthority = Authority.builder().name("USER").build();
-        Authority adminAuthority = Authority.builder().name("ADMIN").build();
-        Authority teacherAuthority = Authority.builder().name("TEACHER").build();
-        Authority employeeAuthority = Authority.builder().name("EMPLOYEE").build();
-
-        authorityRepository.save(userAuthority);
-        authorityRepository.save(adminAuthority);
-        authorityRepository.save(teacherAuthority);
-        authorityRepository.save(employeeAuthority);
-        SignUpDTO admin = SignUpDTO.builder()
+        User admin = User.builder()
+                .id(1L)
                 .firstName("Admin")
                 .lastName("Admin")
-                .username("sys_admin")
-                .email("admin@sosadmin.com")
-                .password("00000000")
-                .phone("+000000000000")
-                .authority("ADMIN")
+                .username("admin")
+                .email("admin@admin.com")
+                .password("123")
+                .phone(Phone.builder()
+                        .countryCode("244")
+                        .phoneNumber("24232244342L")
+                        .build())
+                .authority(Authority.ADMIN)
+                .isActive(true)
+                .verificationStatus(Verification.ACTIVE)
                 .build();
-        userService.save(admin, 1L);
+        userRepository.save(admin);
     }
 }

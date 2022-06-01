@@ -7,13 +7,18 @@ import com.example.demo.domain.service.CourseService;
 import com.example.demo.domain.service.CourseTagsService;
 import com.example.demo.domain.service.UserService;
 import com.example.demo.domain.value.dto.CourseDTO;
+import com.example.demo.domain.value.dto.LessonModuleDTO;
+import com.example.demo.domain.value.dto.TagDTO;
+import com.example.demo.domain.value.dto.UserDTO;
 import com.example.demo.domain.value.dto.create.CreateCourseDTO;
 import com.example.demo.domain.value.dto.update.UpdateCourseDTO;
 import com.example.demo.domain.value.dto.update.UpdateCourseTagsDTO;
 import com.example.demo.domain.value.enumurator.CourseCategory;
+import com.example.demo.domain.value.enumurator.Language;
 import com.example.demo.domain.value.enumurator.Level;
 import com.example.demo.domain.value.enumurator.TagAction;
-import com.example.demo.exceptions.InvalidResourceException;
+import com.example.demo.exceptions.CustomException;
+import com.example.demo.utility.validator.UserValidator;
 import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,14 +26,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.example.demo.exceptions.EntityNotFoundException;
+
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,6 +61,9 @@ public class CourseServiceImpl implements CourseService {
             if (filterOption.get("title") != null){
                 booleanBuilder.and(qCourse.title.containsIgnoreCase(String.valueOf(filterOption.get("title"))));
             }
+            if (filterOption.get("slugTitle") != null){
+                booleanBuilder.and(qCourse.slugTitle.containsIgnoreCase(String.valueOf(filterOption.get("slugTitle"))));
+            }
             if (filterOption.get("courseCategory") != null){
                 booleanBuilder.and(qCourse.courseCategory.eq(CourseCategory.valueOf(String.valueOf(filterOption.get("courseCategory")))));
             }
@@ -64,9 +73,9 @@ public class CourseServiceImpl implements CourseService {
             if (filterOption.get("author") != null){
                 booleanBuilder.and(qCourse.author.id.eq(Long.valueOf(String.valueOf(filterOption.get("author")))));
             }
-            if (filterOption.get("language") != null){
-                booleanBuilder.and(qCourse.language.name.containsIgnoreCase(String.valueOf(filterOption.get("language"))));
-            }
+//            if (filterOption.get("language") != null){
+//                booleanBuilder.and(qCourse.language.eq(Language.valueOf(String.valueOf(filterOption.get("language")))));
+//            }
 
             if (filterOption.get("tags") != null){
                 final String[] tagsId = filterOption.get("tags").toString().split(",");
@@ -107,13 +116,21 @@ public class CourseServiceImpl implements CourseService {
 
         }catch (Exception e){
             System.out.println(e.getMessage());
-            throw new InvalidResourceException(e.getMessage());
+            throw CustomException.builder()
+                    .code(e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
         }
     }
 
     @Override
     public CourseDTO getCourseById(Long id) {
-        final Course course = courseRepository.findById(id).orElseThrow(() -> new InvalidResourceException("Course not found with id:" + id));
+        final Course course = courseRepository.findById(id).orElseThrow(() ->
+        CustomException.builder()
+                .code("Course not found with id:" + id)
+                .status(HttpStatus.BAD_REQUEST)
+                .build()
+        );
         return modelMapper.map(course,CourseDTO.class);
     }
 
@@ -123,16 +140,20 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public CourseDTO createCourse(CreateCourseDTO dto){
-        User courseAuthor = userService.getById(dto.getAuthorId());
+        User courseAuthor = userService.getById(dto.getAuthor());
+
         final Course course = Course.builder()
                 .title(dto.getTitle())
-                .courseCategory(dto.getCourseCategory())
-                .tags(dto.getTags())
-                .author(courseAuthor)
-                .isActive(dto.isActive())
+                .slugTitle(dto.getSlugTitle())
+                .description(dto.getDescription())
                 .skillLevel(dto.getSkillLevel())
                 .price(dto.getPrice())
+                .duration(dto.getDuration())
+                .courseImageURL(dto.getCourseImageURL())
+                .courseVideoURL(dto.getCourseVideoURL())
+                .author(courseAuthor)
                 .language(dto.getLanguage())
+//                .contributes(dto.getContributes())
                 .build();
         return modelMapper.map(courseRepository.save(course),CourseDTO.class);
     }
@@ -163,9 +184,17 @@ public class CourseServiceImpl implements CourseService {
             courseToUpdate.getTags().add(newCourseTag);
         }else if (dto.getAction().equals(TagAction.REMOVE)){
             courseToUpdate.getTags().remove(tagService.getTagById(dto.getTagId()));
-//            final Set<Tag> updatedTags = courseToUpdate.getTags().stream().filter(tag -> tag.getId() != dto.getTagId()).collect(Collectors.toSet());
-//            courseToUpdate.setTags(updatedTags);
         }
         return modelMapper.map(courseRepository.save(courseToUpdate),CourseDTO.class);
+    }
+
+    @Override
+    public CourseDTO getCourseBySlugTitle(String slugTitle) {
+        final Course course = courseRepository.findBySlugTitle(slugTitle).orElseThrow(() ->
+                CustomException.builder()
+                        .code("Course not found with title:" + slugTitle)
+                        .status(HttpStatus.NOT_FOUND )
+                        .build());
+        return modelMapper.map(course, CourseDTO.class);
     }
 }

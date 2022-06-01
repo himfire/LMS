@@ -3,6 +3,7 @@ package com.example.demo.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 
@@ -34,4 +35,7 @@ public class Lesson extends Auditable{
 
     @ManyToOne
     private LessonModule lessonsModule;
+
+    @OneToMany
+    private List<Comment> comments;
 }

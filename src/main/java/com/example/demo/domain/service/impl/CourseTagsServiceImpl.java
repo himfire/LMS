@@ -5,9 +5,10 @@ import com.example.demo.domain.repository.CourseTagsRepository;
 import com.example.demo.domain.service.CourseTagsService;
 import com.example.demo.domain.value.dto.ClassificationDTO;
 import com.example.demo.domain.value.dto.TagDTO;
-import com.example.demo.exceptions.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 

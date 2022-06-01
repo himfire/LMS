@@ -17,4 +17,5 @@ public interface CourseService {
     void deleteCourse(Long id);
     CourseDTO updateCourse(UpdateCourseDTO dto, Long id);
     CourseDTO updateCourseTags(Long courseId, UpdateCourseTagsDTO dto);
+    CourseDTO getCourseBySlugTitle(String slugTitle);
 }
