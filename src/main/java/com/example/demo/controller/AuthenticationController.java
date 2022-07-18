@@ -30,7 +30,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody SignUpDTO dto){
+    public ResponseEntity<String> signUp(@RequestBody SignUpDTO dto){
         userService.signUp(dto);
         return new ResponseEntity<>(null, HttpStatus.CREATED);
     }

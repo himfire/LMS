@@ -31,11 +31,6 @@ public class CourseController {
         return  courseService.getAllCourses(queryParams);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity getCouresById(@PathVariable Long id){
-//        return new ResponseEntity(courseService.getCourseById(id),HttpStatus.OK);
-//    }
-
     @GetMapping("/{title}")
     public CourseDTO getCoursesByTitle(@PathVariable String title){
         return courseService.getCourseBySlugTitle(title);

@@ -13,7 +13,6 @@ public interface UserRepository extends JpaRepository<User,Long>, QuerydslPredic
 
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-
     Optional<User> findUserByEmail(String email);
     Optional<User> findUserById(Long id);
     Optional<User> findUserByUsername(String username);

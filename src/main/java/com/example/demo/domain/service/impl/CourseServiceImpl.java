@@ -140,6 +140,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public CourseDTO createCourse(CreateCourseDTO dto){
+        System.out.println("Author Id: "+dto.getAuthor());
         User courseAuthor = userService.getById(dto.getAuthor());
 
         final Course course = Course.builder()

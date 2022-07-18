@@ -114,6 +114,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     public void signUp(SignUpDTO dto){
         List<String> errors = new ArrayList<String>();
+        dto.setAuthority(Authority.USER);
         if(userRepository.existsByEmail(dto.getEmail())){
             errors.add("Email is already registered");
         }
@@ -128,11 +129,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .build();
 
         }
-
-
-
-
-
         if ( ! UserValidator.validate(dto).isEmpty()){
             throw CustomException.builder()
                     .code("Invalid User")
@@ -146,6 +142,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .lastName(dto.getLastName())
                     .username(dto.getUsername())
                     .email(dto.getEmail())
+                    .authority(dto.getAuthority())
                     .password(passwordEncoder.encode(dto.getPassword()))
                     .phone(dto.getPhone())
                     .address(dto.getAddress())
@@ -155,12 +152,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
             final User saved = userRepository.save(savedUser);
             String code = UUID.randomUUID().toString();
-            mailService.sendEmail(dto.getEmail(),"Acount verification",
+            /*mailService.sendEmail(dto.getEmail(),"Acount verification",
                     "Your verifictaion code is "+ code
 
                     +"Or you can confirm your account by clicking here : "
                             + "http://20.237.84.70:80/verify-account/"+saved.getId()+"/"+code
-                    );
+                    );*/
             verificationRequestRepository.save(VerificationRequest.builder()
                     .code(code)
                     .user(savedUser)
@@ -181,7 +178,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 //                    .status(HttpStatus.BAD_REQUEST)
 //                    .build();
 //        }
-        User user = userRepository.findById(id).orElseThrow(
+        User user = userRepository.findUserById(id).orElseThrow(
                 ()-> new EntityNotFoundException("User not found with id: "+id)
         );
         return modelMapper.map(user,UserDTO.class);
@@ -189,7 +186,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User getById(long id) {
-        return userRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("User not found with id:"+id));
+        return userRepository.findUserById(id).orElseThrow(()-> new EntityNotFoundException("User not found with id:"+id));
     }
 
     @Override
@@ -247,6 +244,20 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDTO save(SignUpDTO dto, Long id) {
+        if(userRepository.findUserByEmail(dto.getEmail()).isPresent()){
+            throw CustomException.builder()
+                    .code("User is already register with email address: "+dto.getEmail())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
+
+        }
+        if(userRepository.findUserByUsername(dto.getUsername()).isPresent()){
+            throw CustomException.builder()
+                    .code("User is already register with email address: "+dto.getEmail())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
+
+        }
         String encryptedPassword = passwordEncoder.encode(dto.getPassword());
         User user= modelMapper.map(dto,User.class);
         if (id != null ){
