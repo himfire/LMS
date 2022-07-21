@@ -15,6 +15,7 @@ import com.example.demo.domain.value.dto.SignUpDTO;
 import com.example.demo.domain.value.dto.UserDTO;
 import com.example.demo.domain.value.enumurator.Authority;
 import com.example.demo.exceptions.CustomException;
+import com.example.demo.utility.validator.SignUpValidator;
 import com.example.demo.utility.validator.UserValidator;
 import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -129,10 +130,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .build();
 
         }
-        if ( ! UserValidator.validate(dto).isEmpty()){
+        if ( ! SignUpValidator.validate(dto).isEmpty()){
             throw CustomException.builder()
                     .code("Invalid User")
-                    .errors(UserValidator.validate(dto))
+                    .errors(SignUpValidator.validate(dto))
                     .status(HttpStatus.BAD_REQUEST)
                     .build();
         }
@@ -144,8 +145,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .email(dto.getEmail())
                     .authority(dto.getAuthority())
                     .password(passwordEncoder.encode(dto.getPassword()))
-                    .phone(dto.getPhone())
-                    .address(dto.getAddress())
                     .authority(dto.getAuthority())
                     .build();
             // send a verif code to email address
@@ -203,6 +202,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                         .build();
             }
             log.info("User Information: "+dto.toString());
+            if ( ! UserValidator.validate(dto).isEmpty()){
+                throw CustomException.builder()
+                        .code("Invalid User")
+                        .errors(UserValidator.validate(dto))
+                        .status(HttpStatus.BAD_REQUEST)
+                        .build();
+            }
             // TODO: validate new data
             User user = getById(id);
             user.setFirstName(dto.getFirstName());
